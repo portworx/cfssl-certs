@@ -1,5 +1,5 @@
 #!/bin/bash
-# generate certs for etcd or consul using CloudFlare's cfssl [201609.07MeV]
+# generate certs for etcd or consul using CloudFlare's cfssl [201609.16MeV]
 # https://www.digitalocean.com/community/tutorials/how-to-secure-your-coreos-cluster-with-tls-ssl-and-firewall-rules
 # https://github.com/cloudflare/cfssl
 
@@ -152,9 +152,9 @@ EOFCACONFIG
 			{
 				"C": "US",
 				"L": "CA",
-				"O": "Portworx, Inc.",
-				"ST": "San Francisco",
-				"OU": "West-2"
+				"O": "Example, Inc.",
+				"ST": "Anytown",
+				"OU": "west-2"
 			}
 		]
 	}
