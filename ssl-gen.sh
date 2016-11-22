@@ -1,5 +1,5 @@
 #!/bin/bash
-# generate certs for etcd or consul using CloudFlare's cfssl [201609.16MeV]
+# generate certs for etcd or consul using CloudFlare's cfssl [201611.22MeV]
 # https://www.digitalocean.com/community/tutorials/how-to-secure-your-coreos-cluster-with-tls-ssl-and-firewall-rules
 # https://github.com/cloudflare/cfssl
 
@@ -60,6 +60,12 @@ ca_config="/tmp/${ca}-config.json"
 key_algo=rsa
 key_size=2048
 cert_expire=`expr 5 \* 365 \* 24`	# hours in 5 years
+
+C=US
+L=CA
+O=Example, Inc.
+ST=Anytown
+OU=devops
 
 [ ! -e /usr/local/bin/ ] && mkdir -P /usr/local/bin
 case $(uname) in
@@ -150,11 +156,11 @@ EOFCACONFIG
 		},
 		"names": [
 			{
-				"C": "US",
-				"L": "CA",
-				"O": "Example, Inc.",
-				"ST": "Anytown",
-				"OU": "west-2"
+				"C": "${C}",
+				"L": "${L}",
+				"O": "${O}",
+				"ST": "${ST}",
+				"OU": "${OU}"
 			}
 		]
 	}
