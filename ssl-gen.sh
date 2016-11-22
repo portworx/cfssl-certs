@@ -63,9 +63,9 @@ cert_expire=`expr 5 \* 365 \* 24`	# hours in 5 years
 
 C="US"
 L="CA"
-O="Example, Inc."
-ST="Anytown"
-OU="devops"
+O="Portworx_Inc"
+ST="Los_Altos"
+OU="testing"
 
 [ ! -e /usr/local/bin/ ] && mkdir -P /usr/local/bin
 case $(uname) in
@@ -182,7 +182,7 @@ for host in $(cat ${conf_file}) ; do
 	h=$(echo ${host} | sed -e 's/,/","/g' -e 's/^/"/' -e 's/$/"/')
 	s=$(echo ${host} | awk -F"," '{print $1}' | sed -e 's/.portworx.com//')
     # CN must match CN of CA key
-	f=$(printf '{"CN":"%s","hosts":[%s],"key":{"algo":"%s","size":%s}}' ${conf_name} ${h} ${key_algo} ${key_size})
+	f=$(printf '{"CN":"%s","hosts":["%s"],"key":{"algo":"%s","size":%s}}' ${conf_name} ${h} ${key_algo} ${key_size})
 	echo "================================================== generating ${s} certs+keys"
 	if [ $OPT_n -eq 1 ]; then
 	    echo ${f} | cfssl gencert -ca=${ca}.pem -ca-key=${ca}-key.pem -config=${ca_config} \
@@ -191,11 +191,11 @@ for host in $(cat ${conf_file}) ; do
 	fi
 done
 
-rm -f ${ca_csr}* ${ca_config}* *.csr ${conf_file}
+#rm -f ${ca_csr}* ${ca_config}* *.csr ${conf_file}
 echo "================================================== bundling all certs"
 if [ $OPT_n -eq 1 ]; then
-    mkbundle .
-    mv cert-bundle.crt ${conf_name}.crt
+    mkbundle -f ${conf_name}.crt .
+    #mv cert-bundle.crt ${conf_name}.crt
     openssl x509 -in ${conf_name}.crt -text -noout
 fi
 
