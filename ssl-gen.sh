@@ -61,11 +61,11 @@ key_algo=rsa
 key_size=2048
 cert_expire=`expr 5 \* 365 \* 24`	# hours in 5 years
 
-C=US
-L=CA
-O=Example, Inc.
-ST=Anytown
-OU=devops
+C="US"
+L="CA"
+O="Example, Inc."
+ST="Anytown"
+OU="devops"
 
 [ ! -e /usr/local/bin/ ] && mkdir -P /usr/local/bin
 case $(uname) in
@@ -179,10 +179,10 @@ fi
 # config file is in the form
 # DNS name, internal AWS DNS, internal AWS IP, external AWS IP
 for host in $(cat ${conf_file}) ; do
-	h=$(echo ${host} | sed -e 's/,/","/g')
+	h=$(echo ${host} | sed -e 's/,/","/g' -e 's/^/"/' -e 's/$/"/')
 	s=$(echo ${host} | awk -F"," '{print $1}' | sed -e 's/.portworx.com//')
     # CN must match CN of CA key
-	f=$(printf '{"CN":"%s","hosts":["%s"],"key":{"algo":"%s","size":%s}}' ${conf_name} ${h} ${key_algo} ${key_size})
+	f=$(printf '{"CN":"%s","hosts":[%s],"key":{"algo":"%s","size":%s}}' ${conf_name} ${h} ${key_algo} ${key_size})
 	echo "================================================== generating ${s} certs+keys"
 	if [ $OPT_n -eq 1 ]; then
 	    echo ${f} | cfssl gencert -ca=${ca}.pem -ca-key=${ca}-key.pem -config=${ca_config} \
