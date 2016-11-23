@@ -11,7 +11,7 @@ if [ "`echo $PATH | grep /usr/local/bin`" == "" ]; then PATH=$PATH:/usr/local/bi
 function USAGE {
 	cat <<-EOFUSAGE
 
-	generate SSL certs for etcd or consul using config file
+    generate SSL certs for etcd or consul using config file
 
     Usage: ${0##*/} -dhn <CONFIG_FILE>
 
@@ -48,8 +48,8 @@ shift $((OPTIND-1)) # move to next argument after options
 ## defaults
 #
 conf_file=${1}
-conf_base=${1##*/}
-conf_name=${conf_base%%.*}
+tmp=${1##*/}		# longest occurance of slash from back
+conf_name=${tmp%%.*}	# longest occurance of dot from front
 cur_d=$(pwd)
 
 ca=${conf_name}-ca
@@ -180,18 +180,24 @@ fi
 # DNS name, internal AWS DNS, internal AWS IP, external AWS IP
 for host in $(cat ${conf_file}) ; do
 	h=$(echo ${host} | sed -e 's/,/","/g' -e 's/^/"/' -e 's/$/"/')
-	s=$(echo ${host} | awk -F"," '{print $1}' | sed -e 's/.portworx.com//')
+	fqdn=$(echo ${host} | awk -F"," '{print $1}')
+	s=${fqdn%%.*} # remove longest occurance of dot from back
+	
     # CN must match CN of CA key
 	f=$(printf '{"CN":"%s","hosts":[%s],"key":{"algo":"%s","size":%s}}' ${conf_name} ${h} ${key_algo} ${key_size})
 	echo "================================================== generating ${s} certs+keys"
 	if [ $OPT_n -eq 1 ]; then
 	    echo ${f} | cfssl gencert -ca=${ca}.pem -ca-key=${ca}-key.pem -config=${ca_config} \
 		    -hostname="${h}" -profile=client-server - | cfssljson -bare ${s}
+	    echo -n "verifying with ${ca}.pem for sslserver..."
 	    openssl verify -purpose sslserver -CAfile ${ca}.pem ${s}.pem
+	    echo -n "verifying with ${ca}.pem for sslclient..."
+	    openssl verify -purpose sslclient -CAfile ${ca}.pem ${s}.pem
 	fi
 done
 
-#rm -f ${ca_csr}* ${ca_config}* *.csr ${conf_file}
+rm -f *.csr ${conf_file}
+#rm -f ${ca_csr}* ${ca_config}*
 echo "================================================== bundling all certs"
 if [ $OPT_n -eq 1 ]; then
     mkbundle -f ${conf_name}.crt .
