@@ -182,7 +182,7 @@ for host in $(cat ${conf_file}) ; do
 	h=$(echo ${host} | sed -e 's/,/","/g' -e 's/^/"/' -e 's/$/"/')
 	s=$(echo ${host} | awk -F"," '{print $1}' | sed -e 's/.portworx.com//')
     # CN must match CN of CA key
-	f=$(printf '{"CN":"%s","hosts":["%s"],"key":{"algo":"%s","size":%s}}' ${conf_name} ${h} ${key_algo} ${key_size})
+	f=$(printf '{"CN":"%s","hosts":[%s],"key":{"algo":"%s","size":%s}}' ${conf_name} ${h} ${key_algo} ${key_size})
 	echo "================================================== generating ${s} certs+keys"
 	if [ $OPT_n -eq 1 ]; then
 	    echo ${f} | cfssl gencert -ca=${ca}.pem -ca-key=${ca}-key.pem -config=${ca_config} \
@@ -199,6 +199,6 @@ if [ $OPT_n -eq 1 ]; then
     openssl x509 -in ${conf_name}.crt -text -noout
 fi
 
-[ "$(ls *.pem)" != "" ] && chmod 644 *.pem
+[ "*.pem" != "" ] && chmod 644 *.pem
 cd ${cur_d}
 exit
