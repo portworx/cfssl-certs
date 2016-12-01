@@ -199,12 +199,12 @@ for host in $(cat ${conf_file}) ; do
 	    openssl verify -purpose sslclient -CAfile ${ca}.pem ${s}.pem
     	openssl x509 -in ${s}.pem -text -noout
 	fi
+	mv ${s}-key.pem ${s}.key
+	chmod 600 ${s}.key
 done
 
-mv ${s}-key.pem ${s}.key
-chmod 600 ${s}.key
 rm -f *.csr ${conf_file}
-#rm -f ${ca_csr}* ${ca_config}*
+rm -f ${ca_csr}* ${ca_config}*
 #echo "================================================== bundling all certs"
 #if [ $OPT_n -eq 1 ]; then
 #    mkbundle -f ${conf_name}.crt .
