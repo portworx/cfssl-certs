@@ -66,3 +66,25 @@ ls -l /etc/ssl/<SERVICE>
 Then add update your service's config files to use the new certs and keys
 
 Provided are dummy config files for a 3-node etcd cluster and a single node consul node, all running in AWS.
+
+# ENVIRONMENT VARIABLES
+
+etcdv2 uses the following environment variables to run etcdctl without specifying the certs on the command-line:
+
+```
+export ETCDCTL_CERT_FILE=/etc/ssl/etcd/cert.pem
+export ETCDCTL_KEY_FILE=/etc/ssl/etcd/cert.key
+export ETCDCTL_CA_FILE=/etc/ssl/etcd/ca.pem
+```
+
+etcdv3 uses different environment variables to run etcdctl without specifying the certs on the command-line if you specify ETCDCTL_API=3:
+
+```
+export ETCDCTL_API=3
+export ETCDCTL_CACERT=/etc/ssl/etcd/ca.pem
+export ETCDCTL_CERT=/etc/ssl/etcd/cert.pem
+export ETCDCTL_KEY=/etc/ssl/etcd/cert.key
+```
+
+If you run with API=2, the old environment variables are used.
+
