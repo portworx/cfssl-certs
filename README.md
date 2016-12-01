@@ -6,11 +6,11 @@ That file contains a string of IP addresses and DNS names which define each mach
 
 The config file a comma-separated list of values, without any spaces.
 ```
-hostname,<external-DNS>,<AWS-internal-DNS>,<AWS-internal-ip>,<AWS-external-IP>
+<external-DNS>,<external-IP>,<AWS-internal-DNS>,<AWS-internal-IP>
 e.g.
-server01,server01.example.com,ip-ii-ii-ii-iii.region.compute.internal,ii.ii.ii.iii,eee.eee.eee.eee
+server01.example.com,eee.eee.eee.eee,ip-ii-ii-ii-iii.region.compute.internal,ii.ii.ii.iii
 ```
-where the first entry on a line is the external DNS address of the machine.  This is used as the server name (without the canonical part of the FQDN) when generating the certs.
+where the first entry on a line is the external DNS address of the machine.  This is used as the server name (without the canonical part of the FQDN) when generating the certs.  The external name up to the first "." will be used for the name of the peer.
 
 
 # SETTING UP CERT KEYS
